@@ -69,3 +69,13 @@ labs (x = "engi",
       size= "2")+
   theme_bw()
 
+
+
+
+
+#################################
+msleep %>%
+  drop_na(vore) %>% # eliminare NA DAOR DINTRO VARIABILA!!
+  ggplot(aes(vore))+
+  geom_bar()
+
