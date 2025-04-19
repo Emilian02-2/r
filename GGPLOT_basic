@@ -1,0 +1,71 @@
+
+
+# ce date sunt in R
+data()
+
+
+
+?BOD
+
+# ggplot 
+
+ggplot(data = BOD,
+       mapping = aes( x= Time, y = demand))+
+  geom_line(colour= "black")
+
+
+
+ggplot(BOD, aes( x = Time, y = demand)) + 
+  geom_point(size = 3) + 
+  geom_line (colour = "red")
+
+co2
+names()
+
+#
+data()
+
+##################
+
+CO2 %>%             #pipe din co2  
+ ggplot(aes(conc, uptake,
+           colour = Treatment)) +    # culoarea e o functie a tratamentului culoarea e tratamentul
+  geom_point(size = 3, alpha = 0.5) +   # alpha il face transparent
+geom_smooth  (method = lm, se = TRUE)+ # geom smooth face un smooth line / METHOD - ce tip de smoothing / se inseamna daca afiseaza intevalul de incredere 
+facet_wrap(~Type)+  # DESPARTIRE GRAFICE IN PANOURI PE BAZA UNEI VARIABILE
+labs(title = "co2", # schimbare titlu
+     colour = "ba")+ #schimbare nume la legenda
+theme_bw()   # e o legenda
+
+
+#######################
+CO2 %>%
+  ggplot(aes(Treatment, uptake))+
+  geom_boxplot()+ #creare boxplot
+geom_point( alpha = 0.5,
+  aes(size = conc,
+               colour = Plant))+ 
+  facet_wrap(~Type)+
+  coord_flip()+      # intoacere grafic
+theme_bw()+
+labs(title = "Copii",
+     colour= "a",  size = "b") # colour schimba primba legenda / size schimba a 2 a legenda 
+
+###############
+view(mpg)
+
+mpg %>%
+  filter ( cty < 25) %>%              # alegi, filtru, anumite valori 
+  ggplot(aes(displ, cty ))+
+  geom_point(size= 3, aes( colour = drv,   # culoarea este varabila drv
+                  size = trans,       # fiecare marime este variabila trans
+                  alpha = 0.5))+
+  geom_smooth(method = lm, se = TRUE)+
+  facet_wrap(~year, nrow = 1)+
+labs (x = "engi",
+      y = "mg",
+      title="g",
+      colour= "b",
+      size= "2")+
+  theme_bw()
+
