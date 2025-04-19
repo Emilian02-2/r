@@ -1,0 +1,69 @@
+
+# Încarcare pachete
+library(sf)
+library(spatstat)
+library(ggplot2)
+library(viridis)
+
+# Pur si simplu citirea, shapefile ului sau GeoJSON ului
+puncte_path <- "C:/Users/emyst/OneDrive - Universitatea Ștefan cel Mare din Suceava/Desktop/New folder/Desktop (1)/Desktop (6)/Fisiere QGIS Licenrta/PUNCTE PENEEEEEEEEEEE BUNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN.shp"
+puncte <- st_read(puncte_path)
+
+# Printarea numele coloanelor pentru indentificarea speciei
+print(head(puncte))
+
+
+# Extragere coordonate
+coords <- st_coordinates(puncte) 
+
+# Definirea ferestrei spatiale 
+bbox <- st_bbox(puncte)
+width <- bbox["xmax"] - bbox["xmin"]
+height <- bbox["ymax"] - bbox["ymin"]
+xmin_ext <- bbox["xmin"] - 0.2 * width  # crestere cu 20 % a ferestrei 
+xmax_ext <- bbox["xmax"] + 0.2 * width
+ymin_ext <- bbox["ymin"] - 0.2 * height
+ymax_ext <- bbox["ymax"] + 0.2 * height
+
+# Crearea fereastra pentru calcul pe baza definirii festrei de mai sus
+window_ext <- owin(xrange = c(xmin_ext, xmax_ext), yrange = c(ymin_ext, ymax_ext))
+
+# realizare obiect tip point pattern din coordonatele extrase
+ppp_all <- ppp(coords[,1], coords[,2], window = window_ext)
+
+# Calcularea numărului de puncte per specie
+tabel_specii <- table(puncte[[specie_col]])
+print("Număr de puncte per specie:")
+print(tabel_specii)
+
+# DENSITATEA kernel 
+bw_optim <- bw.diggle(ppp_all)  # optimizare densitate (netezire)  = distributie continua 
+bw_ajustat <- bw_optim * 2 # ajuta la netezire - ajustare manuala
+
+
+# Calcularea densitatii kernel 
+dens_all <- density(ppp_all, sigma = bw_ajustat)
+
+# Transformarea densitate in data frame
+dens_df <- as.data.frame(dens_all, xy = TRUE)
+names(dens_df)[3] <- "densitate"  # coloana densitatii / redenumire doar coloana 3 
+
+# Vizualizarea densității folosind ggplot2
+ggplot() +
+  geom_raster(data = dens_df, aes(x = x, y = y, fill = densitate)) +  # Harta de densitate
+  geom_point(data = as.data.frame(coords), aes(x = X, y = Y), 
+             color = "white", size = 2, alpha = 0.7) +  # Puncte originale
+  geom_point(data = as.data.frame(coords), aes(x = X, y = Y), 
+             color = "black", size = 1.5) +  # Puncte originale (detalii)
+  scale_fill_viridis_c(option = "black", name = "Densitate") +  # Paleta de culori
+  labs(title = "Densitatea probelor",
+       x = "Longitudine", y = "Latitudine") +  # Titluri și etichete
+  theme_minimal() +  # Stilul hărții
+  theme(
+    legend.position = "right",
+    plot.title = element_text(size = 16, face = "bold"),
+    plot.subtitle = element_text(size = 12),
+    axis.text = element_text(size = 10),
+    panel.grid.minor = element_blank()
+  ) +
+  coord_equal()  # Asigură scalarea egală a axelor
