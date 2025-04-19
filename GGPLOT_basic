@@ -74,8 +74,11 @@ labs (x = "engi",
 
 
 #################################
+
+
 msleep %>%
   drop_na(vore) %>% # eliminare NA DAOR DINTRO VARIABILA!!
   ggplot(aes(vore))+
-  geom_bar()
+  coord_flip()+
+  geom_bar(fill= "red")
 
