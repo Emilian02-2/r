@@ -76,9 +76,46 @@ labs (x = "engi",
 #################################
 
 
+
 msleep %>%
   drop_na(vore) %>% # eliminare NA DAOR DINTRO VARIABILA!!
-  ggplot(aes(vore))+
-  coord_flip()+
+  ggplot(aes(fct_infreq(vore)))+  # de la mic la mare
+  coord_flip()+ # intoarce grafic 
   geom_bar(fill= "red")
 
+
+
+
+
+
+###########
+
+
+mpg
+
+
+
+
+msleep %>%
+  drop_na(vore) %>% # eliminare NA DAOR DINTRO VARIABILA!!
+  ggplot(aes(fct_infreq(vore)))+  # de la mic la mare
+  coord_flip()+
+  geom_histogram(fill= "red")
+
+
+
+library(tidyverse)
+#########
+view(gapminder)
+
+
+gapminder %>%
+  filter(contintent %in% c ("Africa", "Europe"))+ ### ALEGEREA DOAR A ACESTORA
+  filter(gdpPercap <3000) %>%
+  ggplot*aes(gdpPercap,
+             lifeExp,
+             size = pop,
+             color = yea))+
+  geom_point()+
+  facet_wrap (~continent)+
+  labs()
