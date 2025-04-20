@@ -27,16 +27,20 @@ data()
 
 ##################
 
-CO2 %>%             #pipe din co2  
- ggplot(aes(conc, uptake,
-           colour = Treatment)) +    # culoarea e o functie a tratamentului culoarea e tratamentul
-  geom_point(size = 3, alpha = 0.5) +   # alpha il face transparent
-geom_smooth  (method = lm, se = TRUE)+ # geom smooth face un smooth line / METHOD - ce tip de smoothing / se inseamna daca afiseaza intevalul de incredere 
-facet_wrap(~Type)+  # DESPARTIRE GRAFICE IN PANOURI PE BAZA UNEI VARIABILE
-labs(title = "co2", # schimbare titlu
-     colour = "ba")+ #schimbare nume la legenda
-theme_bw()   # e o legenda
+plot (weight ~ water, data = .... ) #   inaltimea este o functie a apaei 
 
+
+CO2 %>%             #pipe din co2  
+  ggplot(aes(conc, uptake,
+             colour = Treatment)) +    # culoarea e o functie a tratamentului culoarea e tratamentul
+  geom_point(size = 3, alpha = 0.5) +   # alpha il face transparent
+  geom_smooth  (method = lm, se = TRUE)+ # geom smooth face un smooth line / METHOD - ce tip de smoothing / se inseamna daca afiseaza intevalul de incredere 
+  facet_wrap(~Type)+  # DESPARTIRE GRAFICE IN PANOURI PE BAZA UNEI VARIABILE
+  labs(title = "co2", # schimbare titlu
+       colour = "ba",)+ #schimbare nume la legenda
+  theme_bw()+   # e o legenda
+xlim(0, 100) +   # aici setezi limita pe axa 
+  ylim(0, 50) 
 
 #######################
 CO2 %>%
