@@ -123,3 +123,122 @@ gapminder %>%
   geom_point()+
   facet_wrap (~continent)+
   labs()
+
+
+
+
+
+######
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_wrap(~ class, nrow = 2)
+
+
+
+
+###### face subseturi doar pe randuri
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_grid(drv ~ .)
+###### face subseturi doar pe coloane
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_grid(. ~ cyl)
+
+#### immparte subploturi pe 2 randuri
+
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_wrap(~ class, nrow = 2)
+
+#### face un smoothing pe baza la 3 linii + puncte 
+ggplot(data = mpg) + 
+  geom_smooth(mapping = aes(x = displ, y = hwy, linetype = drv, colour = drv))+
+  geom_point(aes(displ, hwy, colour = drv))
+
+
+
+
+# NU PUNE LEGENDA
+
+mpg %>%
+ggplot() + 
+  geom_smooth(mapping = aes(x = displ, y = hwy, linetype = drv, colour = drv))+
+  geom_point(aes(displ, hwy, colour = drv),
+  show.legend = FALSE
+)
+
+
+
+# FILTREAZA DATELE
+mpg %>%
+  ggplot(aes(displ, hwy))+
+  geom_point(aes(color=class)) +
+  geom_smooth(data= filter(mpg, class == "subcompact"), se = FALSE) ## filtrare data / == daca este egala clasa cu subcompact, atundici filtrezi / e o condotoie/ se= false, se sterge 
+
+
+
+
+
+
+# 
+
+mpg %>%
+  ggplot(aes(displ, hwy)) +
+  geom_point(size = 3)+
+  geom_smooth(aes(linetype=drv),colour= "blue",  se = F)
+  
+
+
+# box plot
+
+ggplot(diamonds) + 
+  geom_bar(mapping = aes(x = cut))
+
+# pentru fiecare box plot,
+ggplot(diamonds) +
+  stat_count (aes ( x = cut))
+
+
+# CREARE BPLOX PLOT CU frecventa 
+demo <- tribble( 
+  ~cut,         ~freq,    # Se pune ~ in cazul asta pentru a marca numele coloanelor cand creezi un tip de tabel ( tibble)
+  "Fair",       1610,
+  "Good",       4906,
+  "Very Good",  12082,
+  "Premium",    13791,
+  "Ideal",      21551
+)
+ggplot(demo) + 
+  geom_bar(mapping = aes(x = cut, y = freq), stat = "identity")
+
+
+
+
+
+
+#
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, y = stat(prop), group = 1)) # stat calculeaza proportia in loc de valorile absolute
+
+#cum pui etichete
+ggplot(data = diamonds, aes(x = cut)) + 
+  geom_bar(aes(y = stat(prop), group = 1)) +
+  geom_text(aes(label = scales::percent(stat(prop)), y = stat(prop), group = 1), # le pui geom_Text
+            stat = "count", vjust = -0.5) # vjust = vertical justification
+
+
+
+
+
+
+# sa fezi min, max, si mediana
+ggplot(data = diamonds) + 
+  stat_summary(
+    mapping = aes(x = cut, y = depth),
+    fun.min = min,
+    fun.max = max,
+    fun = median
+  )
