@@ -306,3 +306,311 @@ ggplot(data = delays, mapping = aes(x = n, y = delay)) +
   geom_point(alpha = 1/10)
 
 
+library(nycflights13)
+library(tidyverse)
+
+
+dpl
+
+#alegem fligts data set din nyc...
+nycflights13::flights
+
+
+int = integer
+
+dbl = real numbers
+
+chr = character vectors
+
+dttm = data-times
+
+
+lgl= logical
+
+fctr= factors 
+
+date= dates
+
+
+
+#dplyr - data manipulation
+
+
+filter()  # alege observatii pe baza valorilor
+
+arrange () #reodoneaza randurile
+select() #alege variabile dupa nume
+
+mutate() # creaza o noua variabila cu functii al unei variabile deja existente
+
+
+summarise( ) # constrange multe valori intr-un rezumat
+
+group_by() #Grupează datele în funcție de una sau mai multe variabile, pentru a aplica apoi operații (cum ar fi summarise()) pe fiecare grup în parte.
+
+
+
+
+
+
+# filttrare observatii pe baza valorilor lor
+
+filter(flights, month == 1, day == 1) # 1. e data set, 2. si 3.  argument filtrare data se
+
+# sau il poti duce in alt data frame
+
+
+jan1 <- filter(flights, month == 1, day == 1)
+jan1
+
+
+
+
+
+
+#COMPARATIII ####
+
+> ; >= ; < ; <= ; != (nu e egal)  ; == (este egal)
+
+
+
+filter(flights, month == 1)
+
+# folosirea aritmetica cu precizie finita
+near(sqrt(2) ^ 2, 2)
+
+
+#LOGICAL operators########
+& - si ; | - ori, sau ; ! - nu este
+
+#gresit
+filter(flights, month == 11 | month == 12)
+# corect
+nov_dec <- filter(flights, month %in% c(11, 12))    # %in% alege fiecare rand unde x este valoarea lui y 
+
+
+# De morgans law
+!(x & y) este egal cu !x |!y
+!(x | y) este egal cu !x & !y
+
+
+
+filter(flights, !(arr_delay >120 | dep_delay >120))
+filter( flights, arr_delay <= 120, dep_delay <=120)
+
+
+
+
+
+
+
+#missing values 
+
+# determinarea daca lipseste o valoare
+x<-NA
+is.na(x)
+
+
+
+
+df<- tibble(x = c(1, NA, 3)) # tibble face un data frame mai  maleabil /
+colnames(ba) <- c("NouaColoana1", "NouaColoana2") #adaugare nume la coloane
+
+filter(df, x>1)
+
+filter(df, is.na(x) | x >1)  # prima data filtrezi sa nu fie NA, apoi alegi doar valoarea mai mai mare decat 1
+ 
+
+
+
+# schimbare ordine randuri
+
+arrange(flights, year, month, day)
+
+
+
+arrange(flights, desc(dep_delay))  # descrescator
+
+
+df <- tibble(x = c(5,2, NA))
+arrange(df,  x)
+arrange(df, desc(x))
+
+
+
+
+#selectare coloane din variabile
+
+select(flights, year, month, day)
+select( flights, year:day)  # alegere interval\
+
+
+select(flights, -(year:day))   # cu exceptia year: day
+
+# adaugarea de noua variabila
+
+flights_sml <-select(flights,
+                     year:day,
+                     ends_with("delay"), # se ipreste
+                     distance,
+                     air_time)
+mutate(flights,
+       gain = dep_delay - arr_delay, 
+       hours = air_time / 60,
+       gain_per_hour = gain / hours)
+
+
+# La mutate trebuie ca functia sa fie vectorizata; 
+# recycling rule = daca unul dintre operatori este mai mic decat altul, automat se largeste la aceasi lungime. c(1, 2, 3) + 10  # => c(11, 12, 13)
+
+
+
+#aritmetica modulara
+
+
+%/% = impartire intreaga, fara restartDescription
+%% = restul impartii
+x == y * (x %/% y) + (x %% y) # poti reconstrui numarul x din atul si restul impartirii cu y
+
+
+transmute(flights,
+          dep_time,
+          hour = dep_time %/% 100,   # câtul => ora, pentru ca ora este scris 517, nu 5:17, si imparti 517 / 100, fara sa mai dea restul
+          minute = dep_time %% 100   # restul => minutul ia restul impartirii lui 517 la 100, 5 cu restul 17 => 17
+)
+# concret %/% ia ora, %% ia minutul, din 517
+
+
+
+
+
+
+####logaritmi
+
+log(), log2(), log10()
+
+
+#### deplasare valori
+
+lag(x) - cu o pozitie inapoi
+lead(x) - cu o pozitie in trecut
+
+
+(x <- 1:10)
+#>  [1]  1  2  3  4  5  6  7  8  9 10
+lag(x)
+#>  [1] NA  1  2  3  4  5  6  7  8  9
+lead(x)
+#>  [1]  2  3  4  5  6  7  8  9 10 NA
+
+#operatii cumulative
+
+cumsum(x) #Suma cumulativă
+
+cummean(x) #Media cumulativă
+
+cumprod(x) #Produsul cumulativ
+cummin(x)   #Minimul cumulativ
+cummax(x) #Maximul cumulativ
+
+#### RANK ####
+y <- c(1, 2, 2, NA, 3, 4)
+min_rank(y)  #clasifică valorile (ordonează și le dă un "loc")
+min_rank(desc(y))  #clasificare în ordine descrescătoare
+
+desc(x) #inversează ordinea valorilor pentru sortare
+
+
+
+
+
+##############################
+
+row_number(y)    #Atribuie un număr unic fiecărei valori (chiar și celor egale)
+ 
+dense_rank(y)  #Ca min_rank(), dar fără sări de locuri. Două valori egale = același rang, dar următorul rang nu sare.
+
+
+percent_rank(y) #iți spune unde se află fiecare valoare în clasament, ca procent din total.
+cume_dist(y) #Îți spune proporția valorilor ≤ valoarea curentă. Adică: "câte valori sunt mai mici sau egale decât asta?"
+
+
+
+###### summarise  trebuie pentru mean, sum, sd etc
+
+summarise (flights, delay = mean(dep_delay, na.rm =TRUE))       #  na.rm = TRUE → ignoră valorile lipsă (NA)
+
+
+
+#### summarise combinat cu group_by
+
+by_day <-group_by(flights, year, month, day)
+
+
+summarise(by_day, delay = mean(dep_delay, na.rm =T), year = mean(year, na.rm =T))
+
+
+
+
+
+# combinare multiple operations
+
+
+by_dest <- group_by(flights, dest)
+
+
+delay <-summarise(by_dest,
+                  count = n(),
+                  dist =mean(distance, na.rm =T),
+                  delay = mean(arr_delay, na.rm = T))
+
+delay <- filter(delay, count >20, dest != "HNL") 
+
+ggplot(delay, aes(dist, delay)) +
+  geom_point(aes(size= count), alpha = 1/3)+
+geom_smooth(se=F)
+
+
+
+
+
+delays <- flights %>% 
+  group_by(dest) %>% 
+  summarise(
+    count = n(),
+    dist = mean(distance, na.rm = TRUE),
+    delay = mean(arr_delay, na.rm = TRUE)
+  ) %>% 
+  filter(count > 20, dest != "HNL")
+
+
+
+
+#### counts
+not_cancelled <- flights %>% 
+  filter(!is.na(dep_delay), !is.na(arr_delay)) # verificare is.na daca sunt valori NA
+
+
+delays <-not_cancelled %>%
+  group_by(tailnum)%>%
+  summarise(delay= mean(arr_delay))
+
+ggplot(data = delays, mapping = aes(x = delay)) + 
+  geom_freqpoly(binwidth = 40)  ##### graf de frecventa
+
+
+
+#binwidth este un parametru important în multe tipuri de grafice din R (în special pentru histograme și poligoane de frecvență), și controlează lățimea intervalelor în care sunt grupate datele. De fapt, termenul "bin" (cutie) se referă la intervalele în care sunt împărțite valorile variabilei pe axa X.
+
+
+elays <- not_cancelled %>% 
+  group_by(tailnum) %>% 
+  summarise(
+    delay = mean(arr_delay, na.rm = TRUE),
+    n = n()
+  )
+
+ggplot(data = delays, mapping = aes(x = n, y = delay)) + 
+  geom_point(alpha = 1/10)
+
+
