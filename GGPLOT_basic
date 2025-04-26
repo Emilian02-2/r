@@ -242,3 +242,60 @@ ggplot(data = diamonds) +
     fun.max = max,
     fun = median
   )
+
+
+
+
+ggplot(data, aes(x = Ani)) +
+  # Puncte pentru Cifra Afaceri (colorată pe baza variabilei 'Cifra')
+  geom_point(aes(y = Cifra, color = "Cifra Afaceri")) +  
+  # Curba de ajustare pentru Cifra Afaceri
+  geom_smooth(aes(y = Cifra, color = "Cifra Afaceri"), se = F) +  
+  # Linia pentru Cifra Afaceri
+  geom_line(aes(y = Cifra, color = "Cifra Afaceri")) +   
+  # Puncte pentru Profit (colorate pe baza variabilei 'Profit')
+  geom_point(aes(y = Profit, color = "Profit")) +  
+  # Linia pentru Profit
+  geom_line(aes(y = Profit, color = "Profit")) +   
+  # Curba de ajustare pentru Profit
+  geom_smooth(aes(y = Profit, color = "Profit"), se = F) +  
+  ylab("RON") +
+  xlab("ANI") +
+  # Scale personalizată pentru axa Y
+  scale_y_continuous(labels = scales::comma, 
+                     breaks = seq(min(data$Profit), max(data$Cifra), by = 100000000)) +  
+  # Definirea culorilor și legendei
+  scale_color_manual(name = "Indicator", 
+                     values = c("Cifra Afaceri" = "blue", "Profit" = "red"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+baril$Perioada <- as.Date(baril$Perioada, format = "%m/%d/%Y") #trebuie transformata in date
+
+
+baril<-read.csv("C:/Users/emyst/Desktop/1.csv")  #trebuie transformata in date
+
+ggplot(baril, aes(x = Perioada, y = pret)) +
+  geom_line(color = "blue") +
+  labs(title = "Evoluția prețului barilului de petrol",
+       x = "Ani",
+       y = "Preț (USD/baril)") +
+  theme_minimal()+
+  scale_x_date(limits = as.Date(c("1987-05-20", "2025-12-31")),
+               date_breaks = "1 year",
+               date_labels = "%y") 
