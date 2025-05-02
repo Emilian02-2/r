@@ -183,3 +183,34 @@ ggplot(nox, aes(x = data, y = SV.3)) +
   labs(color = expression(paste(mu, "g/m"^3))) +
   scale_color_gradientn(colors = c("#33ffd9", "#32b37b", "#f1e90e")) + #cu graduient
   theme_minimal()
+
+
+
+
+library(readr)
+library(ggplot2)
+library(lubridate)
+
+# 1. Citește datele
+nox <- read.csv("C:/Users/emyst/Desktop/nox.csv", stringsAsFactors = FALSE)
+
+# 2. Conversie corectă pentru data
+nox$data <- mdy(nox$data)
+
+# 3. Conversie numerică a valorilor
+nox$SV.1 <- as.numeric(nox$SV.1)
+
+# 4. Elimină rândurile cu NA
+nox <- na.omit(nox)
+
+# 6. Grafic
+ggplot(nox, aes(x = data, y = SV.3)) +
+  geom_line() +
+  geom_point(aes(color = SV.3), size = 3) +
+  scale_x_date(date_labels = "%d %B %Y") +
+  xlab("Timp") +
+  ylab(expression(paste("Concentrație PM10 (", mu, "g/m"^3, ")"))) +
+  ggtitle("Evoluția concentrației PM10 - SV.3") +
+  labs(color = expression(paste(mu, "g/m"^3))) +
+  scale_color_gradientn(colors = c("#33ffd9", "#32b37b", "#32b37b","#f1e90e", "#f25a5a")) +
+  theme_minimal()
