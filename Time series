@@ -146,3 +146,40 @@ p <- ggplot(nox_zilnic, aes(x = data, y = SV.1)) +
   )
 
 print(p)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+######################################################################################################################
+
+
+library(readr)
+library(ggplot2)
+library(lubridate)
+
+nox <- read.csv("C:/Users/emyst/Desktop/nox.csv")
+
+# Convertim coloana 'data' la format Date
+nox$data <- mdy(nox$data)
+
+# Plot cu culoare în funcție de SV.3
+ggplot(nox, aes(x = data, y = SV.3)) +
+  geom_line() +
+  geom_point(aes(color = SV.3), size = 3) +
+  xlab("Timp") +
+  ylab(expression(paste("Concentrație NOx (", mu, "g/m"^3, ")"))) +
+  ggtitle("Evoluția concentrației NOx - SV.3") +
+  labs(color = expression(paste(mu, "g/m"^3))) +
+  scale_color_gradientn(colors = c("#33ffd9", "#32b37b", "#f1e90e")) + #cu graduient
+  theme_minimal()
