@@ -67,3 +67,82 @@ summ <- nox_zilnic %>%
   )
 
 print(summ)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#TIMES SERIES CU INTERVALE DE VALOIR
+
+
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+
+# Citim datele
+nox <- read.csv("C:/Users/emyst/Desktop/nox.csv")
+
+# Verificăm primele rânduri
+head(nox)
+
+# Extragem doar data din coloana zi (fără ora)
+nox$data <- as.Date(substr(nox$zi, 1, 10))
+
+# Eliminăm duplicatele - păstrăm doar o valoare per zi
+# (deoarece valorile par a fi aceleași pentru toate orele dintr-o zi)
+nox_zilnic <- nox %>%
+  distinct(data, .keep_all = TRUE)
+
+# Verificăm datele rezultate
+head(nox_zilnic)
+
+# Funcție pentru categorisirea valorilor
+categorize_value <- function(value) {
+  if (value >= 0 && value < 40) return("0-40")
+  else if (value >= 40 && value < 90) return("40-90")
+  else if (value >= 90 && value <= 120) return("90-120")
+  else return("Altele")
+}
+
+# Adăugăm coloana de categorie pentru toate valorile
+nox_zilnic$SV.1_categorie <- sapply(nox_zilnic$SV.1, categorize_value)
+
+# Grafic cu linie gri și puncte colorate în funcție de valoare
+p <- ggplot(nox_zilnic, aes(x = data, y = SV.1)) +
+  # Mai întâi adăugăm linia gri
+  geom_line(color = "grey", linewidth = 0.8, alpha = 0.7) +
+  # Apoi adăugăm punctele colorate
+  geom_point(aes(color = SV.1_categorie), size = 3) +
+  scale_color_manual(values = c("0-40" = "red", 
+                                "40-90" = "orange", 
+                                "90-120" = "black",
+                                "Altele" = "grey50"),
+                     name = "Interval de valori") +
+  labs(title = "Evoluția zilnică a SV.1",
+       subtitle = "Puncte colorate după interval: 0-40 roșu, 40-90 portocaliu, 90-120 negru",
+       x = "Data",
+       y = "SV.1") +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(face = "bold"),
+    axis.title = element_text(face = "bold")
+  )
+
+print(p)
